@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import jwt from 'jsonwebtoken';
+import brypt from 'bcrypt'
 
 const userSchema = new Schema(
     {
@@ -47,6 +49,52 @@ const userSchema = new Schema(
         timestamps: true
     }
 );
+
+// hash password
+userSchema.pre("save", async function (next) {
+
+    if (!this.isModified("password")) return next();
+
+    this.password = await brypt.hash(this.password, 10)
+    next()
+});
+
+// compare password when user log in with hash password
+
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await brypt.compare(password, this.password)
+};
+
+// generate access token with jwt
+
+userSchema.methods.generateAccessToken = function () {
+    return jwt.sign(
+        {
+            username: this.username,
+            _id: this._id,
+            email: this.email,
+            fullName: this.fullName
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+};
+
+// generate refresh token with jwt
+
+userSchema.methods.generateRefreshToken = function () {
+    return jwt.sign(
+        {
+            _id: this._id,
+        },
+        REFRESH_TOKEN_SECRET,
+        {
+            expiresIn: REFRESH_TOKEN_EXPIRY
+        }
+    )
+}
 
 
 export const User = mongoose.model("User", userSchema);
