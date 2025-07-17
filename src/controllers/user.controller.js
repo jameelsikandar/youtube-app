@@ -23,7 +23,7 @@ const registerUser = asyncHandler(async (req, res) => {
     // 1.
     const { username, fullName, email, password } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
 
     // 2.
     if (
@@ -50,9 +50,14 @@ const registerUser = asyncHandler(async (req, res) => {
     // 4.
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    let coverImageLocalPath;
 
-    console.log(req.files);
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path;
+    }
+
+    // console.log(req.files);
 
 
     if (!avatarLocalPath) {
@@ -85,7 +90,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken");
 
-    console.log(createdUser);
+    // console.log(createdUser);
 
 
     if (!createdUser) {
@@ -101,4 +106,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 
-export { registerUser }
+
+
+
+export { registerUser, sayHello }
