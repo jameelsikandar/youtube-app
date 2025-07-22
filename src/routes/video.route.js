@@ -1,5 +1,5 @@
 import express from 'express'
-import { publishAvideo, getVideoById, updateVideoDetails } from '../controllers/video.controller.js'
+import { publishAvideo, getVideoById, updateVideoDetails, togglePublishStatus } from '../controllers/video.controller.js'
 import { upload } from '../middlewares/multer.middleware.js'
 import { verifyJWT } from '../middlewares/auth.middleware.js'
 
@@ -19,7 +19,10 @@ router.route('/').post(verifyJWT, upload.fields(
 router.route('/:videoId').get(verifyJWT, getVideoById);
 
 // update video details
-router.route('/:videoId').patch(verifyJWT, updateVideoDetails);
+router.route('/update/:videoId').patch(verifyJWT, updateVideoDetails);
+
+// toggle publish status
+router.route('/toggle-publish/:videoId').patch(verifyJWT, togglePublishStatus);
 
 
 
