@@ -93,7 +93,24 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
 // delete a video
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: delete video
+
+    const video = await Video.findById(videoId);
+
+    if (!video) {
+        throw new ApiError(400, "Video not found")
+    }
+
+    if (video.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(400, "You can only delete your own videos")
+    }
+
+    await video.deleteOne();
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, video, "Video deleted successfully!")
+        )
 })
 
 // change publish status
@@ -122,4 +139,4 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
         )
 });
 
-export { publishAvideo, getVideoById, updateVideoDetails, togglePublishStatus }
+export { publishAvideo, getVideoById, updateVideoDetails, togglePublishStatus, deleteVideo }
