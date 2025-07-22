@@ -64,10 +64,30 @@ const getVideoById = asyncHandler(async (req, res) => {
 })
 
 // update video title, description
-const updateVideo = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
-    //TODO: update video details like title, description, thumbnail
+const updateVideoDetails = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+    const { title, descripition } = req.body;
 
+    if (!(title || descripition)) {
+        throw new ApiError(400, "Title or descripition is required!")
+    }
+
+    const video = await Video.findById(videoId);
+
+    if (!video) {
+        throw new ApiError(400, "Video not found!")
+    }
+
+    video.title = title;
+    video.descripition = descripition;
+
+    const updatedVideoDetails = await video.save();
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, updatedVideoDetails, "Changes updated successfully!")
+        )
 })
 
 // delete a video
@@ -81,4 +101,4 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
 })
 
-export { publishAvideo, getVideoById }
+export { publishAvideo, getVideoById, updateVideoDetails }
