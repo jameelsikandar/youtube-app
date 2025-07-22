@@ -47,7 +47,20 @@ const getAllVideos = asyncHandler(async (req, res) => {
 // get a video by id
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: get video by id
+
+    const video = await Video.findById(videoId)
+        .populate('owner', 'username fullName')
+        .exec();
+
+    if (!video) {
+        throw new ApiError(400, "No video found!")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, video, "Video fetched successfully!"))
+
+
 })
 
 // update video title, description
@@ -68,4 +81,4 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
 })
 
-export { publishAvideo }
+export { publishAvideo, getVideoById }

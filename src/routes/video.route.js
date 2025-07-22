@@ -1,5 +1,5 @@
 import express from 'express'
-import { publishAvideo } from '../controllers/video.controller.js'
+import { publishAvideo, getVideoById } from '../controllers/video.controller.js'
 import { upload } from '../middlewares/multer.middleware.js'
 import { verifyJWT } from '../middlewares/auth.middleware.js'
 
@@ -13,7 +13,10 @@ router.route('/').post(verifyJWT, upload.fields(
         { name: "thumbnail", maxCount: 1 }
     ]),
     publishAvideo
-)
+);
+
+// get video by id
+router.route('/:videoId').get(verifyJWT, getVideoById)
 
 
 
