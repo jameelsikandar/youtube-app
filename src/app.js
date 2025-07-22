@@ -34,6 +34,10 @@ import userRouter from '../src/routes/user.route.js';
 
 app.use('/api/v1/users', userRouter)
 
+import videoRouter from '../src/routes/video.route.js';
+
+app.use('/api/v1/videos', videoRouter)
+
 
 
 
