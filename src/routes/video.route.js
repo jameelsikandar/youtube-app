@@ -1,5 +1,5 @@
 import express from 'express'
-import { publishAvideo, getVideoById, updateVideoDetails, togglePublishStatus, deleteVideo } from '../controllers/video.controller.js'
+import { publishAvideo, getVideoById, updateVideoDetails, togglePublishStatus, deleteVideo, getAllVideos } from '../controllers/video.controller.js'
 import { upload } from '../middlewares/multer.middleware.js'
 import { verifyJWT } from '../middlewares/auth.middleware.js'
 
@@ -14,6 +14,10 @@ router.route('/').post(verifyJWT, upload.fields(
     ]),
     publishAvideo
 );
+
+// get all videos
+router.route('/all-videos/user/:userId').get(verifyJWT, getAllVideos)
+
 
 // get video by id
 router.route('/:videoId').get(verifyJWT, getVideoById);

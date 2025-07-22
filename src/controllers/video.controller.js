@@ -3,6 +3,7 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { ApiError } from '../utils/ApiError.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
+import mongoose from 'mongoose'
 
 
 // publish a video
@@ -40,8 +41,44 @@ const publishAvideo = asyncHandler(async (req, res) => {
 
 // get all video
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
-    //TODO: get all videos based on query, sort, pagination
+    const { userId } = req.params
+    const { page = 1, limit = 10 } = req.query;
+
+    const skip = (parseInt(page - 1) * parseInt(limit));
+
+    const videos = await Video.aggregate(
+        [
+            {
+                $match: {
+                    owner: new mongoose.Types.ObjectId(userId),
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: parseInt(limit)
+            },
+            {
+                $project: {
+                    title: 1,
+                    thumbnail: 1,
+                    createdAt: 1,
+                }
+            }
+        ]
+    );
+
+
+    const totalVideos = await Video.countDocuments({ owner: userId });
+
+    return res.status(200)
+        .json(new ApiResponse(200, { total: totalVideos, videos }, "User Videos paginated"))
 });
 
 // get a video by id
@@ -139,4 +176,4 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
         )
 });
 
-export { publishAvideo, getVideoById, updateVideoDetails, togglePublishStatus, deleteVideo }
+export { publishAvideo, getVideoById, updateVideoDetails, togglePublishStatus, deleteVideo, getAllVideos }
