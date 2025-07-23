@@ -36,10 +36,11 @@ app.use('/api/v1/users', userRouter)
 
 import videoRouter from '../src/routes/video.route.js';
 
-app.use('/api/v1/videos', videoRouter)
+app.use('/api/v1/videos', videoRouter);
 
+import commentRouter from '../src/routes/comment.route.js'
 
-
+app.use('/api/v1/comments', commentRouter)
 
 export { app }
 
