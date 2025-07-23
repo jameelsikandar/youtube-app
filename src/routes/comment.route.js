@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { verifyJWT } from '../middlewares/auth.middleware.js'
-import { addComment, deleteComment, updateComment } from '../controllers/comment.controller.js'
+import { addComment, deleteComment, updateComment, getVideoComments } from '../controllers/comment.controller.js'
 
 
 const router = Router();
@@ -14,6 +14,9 @@ router.route('/:commentId').delete(verifyJWT, deleteComment);
 
 // update comment
 router.route('/:commentId').patch(verifyJWT, updateComment);
+
+// get all comments on a video
+router.route('/all-comments/:videoId').get(verifyJWT, getVideoComments)
 
 
 
