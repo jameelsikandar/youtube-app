@@ -85,7 +85,59 @@ const updateComment = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(new ApiResponse(200, updatedComment, "Comment updated successfully!"))
-})
+});
+
+// get video comments
+const getVideoComments = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    const skip = (parseInt((page) - 1) * parseInt(limit));
+
+    const comments = await Comment.aggregate([
+        {
+            $match: {
+                video: new mongoose.Types.ObjectId(videoId)
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
+            $skip: skip
+        },
+        {
+            $limit: parseInt(limit)
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'owner',
+                foreignField: '_id',
+                as: 'ownerData'
+            }
+        },
+        {
+            $unwind: '$ownerData'
+        },
+        {
+            $project: {
+                title: 1,
+                content: 1,
+                createdAt: 1,
+                'ownerData.username': 1
+            }
+        }
+    ]);
+
+    const totalComments = await Comment.countDocuments({ video: new mongoose.Types.ObjectId(videoId) })
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, { TotalComments: totalComments, comments }, "Comments fetched successfully!"))
+});
 
 
 
@@ -93,5 +145,6 @@ const updateComment = asyncHandler(async (req, res) => {
 export {
     addComment,
     deleteComment,
-    updateComment
+    updateComment,
+    getVideoComments
 }
