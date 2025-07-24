@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-
+// post a tweet
 const postTweet = asyncHandler(async (req, res) => {
     const { content } = req.body;
 
@@ -21,5 +21,36 @@ const postTweet = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, tweet, "Tweet posted successfully!"))
 });
 
+// update tweet
+const updateTweet = asyncHandler(async (req, res) => {
+    const { tweetId } = req.params;
+    const { content } = req.body;
 
-export { postTweet }
+    if (!(content || mongoose.Types.ObjectId.isValid(tweetId))) {
+        throw new ApiError(400, "Content is required! || tweetId is invalid")
+    }
+
+    const tweet = await Tweet.findById(tweetId);
+
+    if (!tweet) {
+        throw new ApiError(400, "Tweet not found!")
+    }
+
+    if (tweet.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(404, "You can ony update your own tweets")
+    }
+
+    tweet.content = content;
+
+    const updatedTweet = await tweet.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, updatedTweet, "Tweet updated successfully!"))
+});
+
+
+export {
+    postTweet,
+    updateTweet
+}
