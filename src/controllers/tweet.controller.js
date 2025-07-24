@@ -49,8 +49,34 @@ const updateTweet = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, updatedTweet, "Tweet updated successfully!"))
 });
 
+// delete tweet
+const deleteTweet = asyncHandler(async (req, res) => {
+    const { tweetId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(tweetId)) {
+        throw new ApiError(400, "Tweet id invalid")
+    }
+
+    const tweet = await Tweet.findById(tweetId);
+
+    if (!tweet) {
+        throw new ApiError(400, "Tweet not found!")
+    }
+
+    if (tweet.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(404, "You can only delete your own tweets!")
+    }
+
+    await tweet.deleteOne()
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, { deletedTweet: tweet }, "Tweet Deleted!"))
+})
+
 
 export {
     postTweet,
-    updateTweet
+    updateTweet,
+    deleteTweet
 }
