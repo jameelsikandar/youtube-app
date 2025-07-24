@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 
-const addTweet = asyncHandler(async (req, res) => {
+const postTweet = asyncHandler(async (req, res) => {
     const { content } = req.body;
 
     if (!content) {
@@ -22,4 +22,4 @@ const addTweet = asyncHandler(async (req, res) => {
 });
 
 
-export { addTweet }
+export { postTweet }
