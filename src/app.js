@@ -45,6 +45,9 @@ app.use('/api/v1/comments', commentRouter)
 import tweetRouter from '../src/routes/tweet.route.js'
 app.use('/api/v1/tweets', tweetRouter)
 
+import likeRouter from '../src/routes/like.route.js'
+app.use('/api/v1/likes', likeRouter)
+
 export { app }
 
 
