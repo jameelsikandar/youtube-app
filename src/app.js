@@ -32,21 +32,24 @@ app.use(cookieParser());
 
 import userRouter from '../src/routes/user.route.js';
 
-app.use('/api/v1/users', userRouter)
+app.use('/api/v1/users', userRouter);
 
 import videoRouter from '../src/routes/video.route.js';
 
 app.use('/api/v1/videos', videoRouter);
 
-import commentRouter from '../src/routes/comment.route.js'
+import commentRouter from '../src/routes/comment.route.js';
 
-app.use('/api/v1/comments', commentRouter)
+app.use('/api/v1/comments', commentRouter);
 
-import tweetRouter from '../src/routes/tweet.route.js'
-app.use('/api/v1/tweets', tweetRouter)
+import tweetRouter from '../src/routes/tweet.route.js';
+app.use('/api/v1/tweets', tweetRouter);
 
-import likeRouter from '../src/routes/like.route.js'
-app.use('/api/v1/likes', likeRouter)
+import likeRouter from '../src/routes/like.route.js';
+app.use('/api/v1/likes', likeRouter);
+
+import subscripitionRouter from '../src/routes/subscripition.route.js';
+app.use('/api/v1/subscripition', subscripitionRouter);
 
 export { app }
 
