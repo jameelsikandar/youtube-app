@@ -3,7 +3,8 @@ import {
     createPlaylist,
     updatePlaylist,
     addVideosToPlaylist,
-    getUserPlaylist
+    getUserPlaylist,
+    getPlaylistById
 } from '../controllers/playlist.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js'
 
@@ -21,5 +22,8 @@ router.route('/add-video/:playlistId/:videoId').post(verifyJWT, addVideosToPlayl
 
 // get all user playlists
 router.route('/user-playlists/:userId').get(verifyJWT, getUserPlaylist);
+
+// get playlist by id
+router.route("/:playlistId").get(getPlaylistById)
 
 export default router;

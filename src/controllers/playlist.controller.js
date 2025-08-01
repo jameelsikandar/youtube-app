@@ -115,6 +115,25 @@ const getUserPlaylist = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { totalPlaylists: playlists.length, playlists }, "Playlists fetched successfully!"))
 
 
+});
+
+
+// get playlist by id
+const getPlaylistById = asyncHandler(async (req, res) => {
+    const { playlistId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(playlistId)) {
+        throw new ApiError(400, "Playlist id is invalid!")
+    }
+
+    const playlist = await Playlist.findById(playlistId)
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {
+            playlistDetails: playlist
+        }, "Playlist fetched successfully!"))
+
 })
 
 
@@ -124,5 +143,6 @@ export {
     createPlaylist,
     updatePlaylist,
     addVideosToPlaylist,
-    getUserPlaylist
+    getUserPlaylist,
+    getPlaylistById
 }
