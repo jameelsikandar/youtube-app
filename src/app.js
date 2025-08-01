@@ -51,6 +51,9 @@ app.use('/api/v1/likes', likeRouter);
 import subscripitionRouter from '../src/routes/subscripition.route.js';
 app.use('/api/v1/subscripition', subscripitionRouter);
 
+import playlistRouter from '../src/routes/playlist.route.js'
+app.use('/api/v1/playlist', playlistRouter);
+
 export { app }
 
 

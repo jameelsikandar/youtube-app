@@ -7,3 +7,6 @@ const router = Router();
 
 // create playlist
 router.route('/create-playlist').post(verifyJWT, createPlaylist);
+
+
+export default router;
