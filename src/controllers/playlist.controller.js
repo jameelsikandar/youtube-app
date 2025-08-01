@@ -134,7 +134,35 @@ const getPlaylistById = asyncHandler(async (req, res) => {
             playlistDetails: playlist
         }, "Playlist fetched successfully!"))
 
-})
+});
+
+
+// remove videos from playlist
+const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
+    const { playlistId, videoId } = req.params;
+
+    if (!(mongoose.Types.ObjectId.isValid(playlistId) && mongoose.Types.ObjectId.isValid(videoId))) {
+        throw new ApiError(400, "Playlist or video id is invalid")
+    }
+
+    const playlist = await Playlist.findById(playlistId);
+
+    if (!playlist) {
+        throw new ApiError(400, "Playlist not found!")
+    }
+
+    playlist.videos.pull(videoId)
+
+    const updatedPlaylist = await playlist.save()
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            updatedPlaylist,
+            "Video removed successfully!"
+        ));
+});
 
 
 
@@ -144,5 +172,6 @@ export {
     updatePlaylist,
     addVideosToPlaylist,
     getUserPlaylist,
-    getPlaylistById
+    getPlaylistById,
+    removeVideoFromPlaylist
 }
