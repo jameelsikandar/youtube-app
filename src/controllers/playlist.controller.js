@@ -3,6 +3,7 @@ import { Playlist } from '../models/playlist.model.js'
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { User } from "../models/user.model.js";
 
 
 // create playlist
@@ -89,6 +90,31 @@ const addVideosToPlaylist = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, addedVideo, "Video added successfully!"))
 
+});
+
+// get user playlists
+const getUserPlaylist = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        throw new ApiError(400, "User id is invalid!")
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(400, "User not found!")
+    }
+
+    const playlists = await Playlist.find({ owner: userId })
+        .populate("videos", "title thumbnail duration")
+        .sort({ createdAt: -1 });
+
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, { totalPlaylists: playlists.length, playlists }, "Playlists fetched successfully!"))
+
+
 })
 
 
@@ -97,5 +123,6 @@ const addVideosToPlaylist = asyncHandler(async (req, res) => {
 export {
     createPlaylist,
     updatePlaylist,
-    addVideosToPlaylist
+    addVideosToPlaylist,
+    getUserPlaylist
 }
