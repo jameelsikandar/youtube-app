@@ -57,6 +57,9 @@ app.use('/api/v1/playlist', playlistRouter);
 import dashboardRouter from '../src/routes/dashboard.route.js'
 app.use('/api/v1/channel', dashboardRouter);
 
+import serverHealthRouter from '../src/routes/healthcheck.route.js'
+app.use('/api/v1/health-check', serverHealthRouter)
+
 export { app }
 
 
