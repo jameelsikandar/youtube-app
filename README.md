@@ -6,6 +6,12 @@ This repository contains the backend code for **YouTubeApp**, a scalable video-s
 
 ## Features
 
+-RESTful API for User resource
+-CRUD operations (Create, Read, Update, Delete)
+-MongoDB database connection via Mongoose
+-Organized MVC architecture
+-Environment configuration using .env
+
 ### User Management
 
 - User registration and login
