@@ -16,7 +16,7 @@ router.route('/').post(verifyJWT, upload.fields(
 );
 
 // get all videos
-router.route('/all-videos/user/:userId').get(verifyJWT, getAllVideos)
+router.route('/all-videos').get(getAllVideos)
 
 
 // get video by id

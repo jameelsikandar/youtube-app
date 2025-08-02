@@ -41,44 +41,63 @@ const publishAvideo = asyncHandler(async (req, res) => {
 
 // get all video
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { userId } = req.params
     const { page = 1, limit = 10 } = req.query;
 
     const skip = (parseInt(page - 1) * parseInt(limit));
 
-    const videos = await Video.aggregate(
-        [
-            {
-                $match: {
-                    owner: new mongoose.Types.ObjectId(userId),
-                }
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: parseInt(limit)
-            },
-            {
-                $project: {
-                    title: 1,
-                    thumbnail: 1,
-                    createdAt: 1,
-                }
+    const videos = await Video.aggregate([
+        {
+            $match: {
+                isPublished: true
             }
-        ]
-    );
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
+            $skip: skip
+        },
+        {
+            $limit: parseInt(limit)
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner"
+            }
+        },
+        {
+            $unwind: "$owner"
+        },
+        {
+            $project: {
+                title: 1,
+                thumbnail: 1,
+                createdAt: 1,
+                "owner.username": 1,
+                "owner.avatar": 1
+            }
+        }
+    ]);
 
+    const totalVideos = await Video.countDocuments({ isPublished: true })
 
-    const totalVideos = await Video.countDocuments({ owner: userId });
-
-    return res.status(200)
-        .json(new ApiResponse(200, { total: totalVideos, videos }, "User Videos paginated"))
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            {
+                totalVideos: totalVideos,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                videos
+            },
+            "All published videos fetched successfully!"
+        ))
 });
 
 // get a video by id
