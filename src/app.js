@@ -54,6 +54,9 @@ app.use('/api/v1/subscripition', subscripitionRouter);
 import playlistRouter from '../src/routes/playlist.route.js'
 app.use('/api/v1/playlist', playlistRouter);
 
+import dashboardRouter from '../src/routes/dashboard.route.js'
+app.use('/api/v1/channel', dashboardRouter);
+
 export { app }
 
 
