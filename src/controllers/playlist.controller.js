@@ -165,6 +165,35 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 });
 
 
+// delete playlist
+const deletePlaylist = asyncHandler(async (req, res) => {
+    const { playlistId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(playlistId)) {
+        throw new ApiError(400, "Playlist id is invalid!")
+    }
+
+    const playlist = await Playlist.findById(playlistId);
+
+    if (!playlist) {
+        throw new ApiError(400, "Playlist not found!")
+    }
+
+    if (playlist.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(404, "You can only delete your own playlist!")
+    }
+
+    await playlist.deleteOne();
+
+
+
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200, { "Playlist Name ": playlist.title }, "Playlist deleted successfully!"
+        ));
+});
+
 
 
 export {
@@ -173,5 +202,6 @@ export {
     addVideosToPlaylist,
     getUserPlaylist,
     getPlaylistById,
-    removeVideoFromPlaylist
+    removeVideoFromPlaylist,
+    deletePlaylist
 }

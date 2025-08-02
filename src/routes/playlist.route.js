@@ -5,7 +5,8 @@ import {
     addVideosToPlaylist,
     getUserPlaylist,
     getPlaylistById,
-    removeVideoFromPlaylist
+    removeVideoFromPlaylist,
+    deletePlaylist
 } from '../controllers/playlist.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js'
 
@@ -29,5 +30,8 @@ router.route("/:playlistId").get(getPlaylistById);
 
 //remove video from playlist
 router.route("/remove-video/:playlistId/:videoId").delete(removeVideoFromPlaylist);
+
+// delete playlist
+router.route("/delete/:playlistId").delete(verifyJWT, deletePlaylist);
 
 export default router;
